@@ -27,5 +27,5 @@ COPY ./ormconfig.js /app/
 COPY ./tsconfig.json /app/
 COPY ./tsconfig.build.json /app/
 COPY ./package.json /app/
-RUN chmod +x /app/docker-entrypoint.sh
+RUN sudo chmod +x /app/docker-entrypoint.sh
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
