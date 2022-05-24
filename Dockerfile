@@ -1,8 +1,5 @@
 FROM node:14.17.6-buster-slim
 
-RUN apt-get update || : && apt-get install python -y
-RUN apt-get install python3-pip -y
-
 ENV APP $APP
 
 WORKDIR /app
