@@ -23,7 +23,6 @@ ENV MINIO_BUCKET $MINIO_BUCKET
 
 WORKDIR /app
 COPY ./src /app/
-COPY ./.env /app/
 COPY ./docker-entrypoint.sh /app/
 COPY ./Dockerfile /app/
 COPY ./nest-cli.json /app/
