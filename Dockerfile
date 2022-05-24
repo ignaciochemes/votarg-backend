@@ -1,4 +1,4 @@
-FROM node:14.17-buster
+FROM node:14.17.6-buster-slim
 
 RUN apt-get update || : && apt-get install python -y
 RUN apt-get install python3-pip -y
