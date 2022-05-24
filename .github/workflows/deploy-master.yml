@@ -31,4 +31,5 @@ jobs:
           push: true
           context: .
           file: ./Dockerfile
+          build-args: APP=prod
           tags: ${{ secrets.REGISTRY_URL }}/votarg-backend-rest:v1.0.0
