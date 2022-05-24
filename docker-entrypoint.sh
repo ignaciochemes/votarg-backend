@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 cd /app
 npm install
 npm run typeorm:${APP} migration:run
