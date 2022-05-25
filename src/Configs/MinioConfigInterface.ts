@@ -1,7 +1,7 @@
 export interface MinioConfigInterface {
     endPoint: string;
     port: number;
-    useSSL: boolean;
+    useSSL: string;
     accessKey: string;
     secretKey: string;
 }
