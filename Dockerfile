@@ -19,13 +19,8 @@ ENV MINIO_USE_SSL $MINIO_USE_SSL
 ENV MINIO_BUCKET $MINIO_BUCKET
 
 WORKDIR /app
-COPY ./src /app/
-COPY ./docker-entrypoint.sh /app/
-COPY ./Dockerfile /app/
-COPY ./nest-cli.json /app/
-COPY ./ormconfig.js /app/
-COPY ./tsconfig.json /app/
-COPY ./tsconfig.build.json /app/
 COPY ./package.json /app/
+RUN npm install --production
+COPY . /app/
 RUN chmod +x /app/docker-entrypoint.sh
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
