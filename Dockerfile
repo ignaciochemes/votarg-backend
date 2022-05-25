@@ -19,8 +19,6 @@ ENV MINIO_USE_SSL $MINIO_USE_SSL
 ENV MINIO_BUCKET $MINIO_BUCKET
 
 WORKDIR /app
-COPY ./package.json /app/
-RUN npm install --production
 COPY . /app/
 RUN chmod +x /app/docker-entrypoint.sh
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
