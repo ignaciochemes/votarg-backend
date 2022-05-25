@@ -1,6 +1,6 @@
 {
   "name": "votarg-backend",
-  "version": "1.0.0",
+  "version": "v1.1",
   "description": "",
   "author": "Ignacio Gonzalez",
   "private": true,
@@ -29,6 +29,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "@types/geoip-lite": "^1.4.1",
     "@types/minio": "^7.0.13",
     "@types/webpack-env": "^1.16.3",
     "aws-sdk": "^2.1139.0",
@@ -37,6 +38,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "crypto-js": "^4.1.1",
+    "geoip-lite": "^1.4.5",
     "mariadb": "^3.0.0",
     "minio": "^7.0.28",
     "mysql2": "^2.3.3",

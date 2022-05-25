@@ -23,7 +23,7 @@ export class PartidosService {
     async create(partido: CreatePartidoRequest, image: BufferedFile): Promise<SuccessfullResponse> {
         const findSecretKey = await this._secretKeyDao.findOne(partido.secretKey);
         if (!findSecretKey) throw new BadRequestException('Secret key not found');
-        const minioImageUrl = await this._minioService.upload(image, 'votarg');
+        const minioImageUrl = await this._minioService.upload(image, process.env.BUCKET_NAME);
         let newPartido = new Partidos();
         newPartido.setName(partido.name);
         newPartido.setLogo(minioImageUrl.url);
@@ -32,39 +32,36 @@ export class PartidosService {
         return new SuccessfullResponse(true);
     }
 
-    // async getPartidosImage(tag: string): Promise<any> {
-    //     return await this._minioService.getFile('votarg', tag);
-    // }
-
-    async getAll(userAgent: any): Promise<Partidos[]> {
-        const detector = new DeviceDetector();
-        const result = detector.detect(userAgent);
-        console.log(result);
+    async getAll(): Promise<Partidos[]> {
         return await this._partidosDao.findAll();
     }
 
-    async votar(id: number, userAgent: any, ip: string): Promise<SuccessfullResponse> {
+    async votar(id: number, request: any, ip: string): Promise<SuccessfullResponse> {
         const detector = new DeviceDetector();
-        const result = detector.detect(userAgent);
+        const result = detector.detect(request.headers['user-agent']);
         let findPartido = await this._partidosDao.findOne(id);
         if (!findPartido) throw new BadRequestException('Partido not found');
         const findUser = await this._userDao.findByIp(ip);
-        if (findUser.length > 0) {
-            const findUserBrowser = findUser.find(user => user.getBrowserName() === result.client.name);
-            const findUserOs = findUser.find(user => user.getOsName() === result.os.name);
-            const findUserType = findUser.find(user => user.getDeviceType() === result.device.type);
+        if (findUser.length > 5) throw new BadRequestException('You have exceeded the limit of votes per family');
+        for (let i = 0; i < findUser.length; i++) {
             if (
-                findUserBrowser && findUserOs && findUserType ||
-                findUserBrowser && findUserType ||
-                findUserOs && findUserType ||
-                findUserBrowser
+                findUser[i].getIp() === ip &&
+                findUser[i].getOsName() === result.os.name &&
+                findUser[i].getOsPlatform() === result.os.platform &&
+                findUser[i].getDeviceType() === result.device.type ||
+                findUser[i].getIp() === ip &&
+                findUser[i].getOsName() === result.os.name &&
+                findUser[i].getOsPlatform() === result.os.platform &&
+                findUser[i].getDeviceType() === result.device.type &&
+                findUser[i].getDeviceBrand() === result.device.brand &&
+                findUser[i].getDeviceModel() === result.device.model
             ) {
-                throw new BadRequestException('User already voted');
-            };
+                throw new BadRequestException('You have already voted');
+            }
         }
         let newUser = new User();
         newUser.setIp(ip);
-        newUser.setUserAgent(userAgent);
+        newUser.setUserAgent(request.headers['user-agent']);
         newUser.setOsName(result.os.name);
         newUser.setOsPlatform(result.os.platform);
         newUser.setBrowserName(result.client.name);

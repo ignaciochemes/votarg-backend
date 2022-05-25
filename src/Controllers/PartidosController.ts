@@ -2,8 +2,11 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UploadedFile, Us
 import { FileInterceptor } from "@nestjs/platform-express";
 import { RealIP } from "nestjs-real-ip";
 import Response from "src/Helpers/Formatter/Response";
+import { HttpInterceptor } from "src/Middleware/HttpInterceptor";
+import { Partidos } from "src/Models/Entities/PartidosEntity";
 import { BufferedFile } from "src/Models/File/FileModel";
 import CreatePartidoRequest from "src/Models/Request/PartidosController/CreatePartidoRequest";
+import SuccessfullResponse from "src/Models/Response/SuccessfullResponse";
 import { PartidosService } from "src/Services/PartidosService";
 
 @Controller('partidos')
@@ -20,34 +23,21 @@ export class PartidosController {
         return Response.create<any>(response);
     }
 
-    // @Get(':tag')
-    // async getPartido(
-    //     @Param('tag') tag: string
-    // ): Promise<Response<any>> {
-    //     const response = await this._partidosService.getPartidosImage(tag);
-    //     return Response.create<any>(response);
-    // }
-
     @Get()
     async getAll(
-        @RealIP() ip: string,
-        @Req() request: any
-    ): Promise<Response<any>> {
-        const response = await this._partidosService.getAll(request.headers['user-agent']);
-        return Response.create<any>(response);
+    ): Promise<Response<Partidos[]>> {
+        const response = await this._partidosService.getAll();
+        return Response.create<Partidos[]>(response);
     }
 
+    @UseInterceptors(HttpInterceptor)
     @Post('/:id/votar')
     async votar(
         @Req() request: any,
         @RealIP() ip: string,
-        @Param('id', ParseIntPipe) id: number
-    ): Promise<Response<any>> {
-        const response = await this._partidosService.votar(
-            id,
-            request.headers['user-agent'],
-            ip
-        );
-        return Response.create<any>(response);
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<Response<SuccessfullResponse>> {
+        const response = await this._partidosService.votar(id, request, ip);
+        return Response.create<SuccessfullResponse>(response);
     }
 }
