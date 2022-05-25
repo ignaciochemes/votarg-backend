@@ -32,4 +32,5 @@ jobs:
           context: .
           file: ./Dockerfile
           build-args: APP=prod
+          platforms: linux/arm/v7
           tags: ${{ secrets.REGISTRY_URL }}/votarg-backend-rest:v1.0
