@@ -12,7 +12,9 @@ export class HttpInterceptor implements NestInterceptor {
         const ctx = context.switchToHttp();
         const request = ctx.getRequest();
         const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+        console.log(ip);
         const geoLocationIp = geoip.lookup(ip);
+        console.log(geoLocationIp);
         if (geoLocationIp?.country !== 'AR') throw new BadRequestException('No se puede votar desde este pais');
         return next.handle();
     }
