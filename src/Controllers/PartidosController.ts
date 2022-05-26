@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UploadedFile, Us
 import { FileInterceptor } from "@nestjs/platform-express";
 import { RealIP } from "nestjs-real-ip";
 import Response from "src/Helpers/Formatter/Response";
-import { HttpInterceptor } from "src/Middleware/HttpInterceptor";
+//import { HttpInterceptor } from "src/Middleware/HttpInterceptor";
 import { Partidos } from "src/Models/Entities/PartidosEntity";
 import { BufferedFile } from "src/Models/File/FileModel";
 import CreatePartidoRequest from "src/Models/Request/PartidosController/CreatePartidoRequest";
@@ -30,7 +30,7 @@ export class PartidosController {
         return Response.create<Partidos[]>(response);
     }
 
-    @UseInterceptors(HttpInterceptor)
+    //@UseInterceptors(HttpInterceptor)
     @Post('/:id/votar')
     async votar(
         @Req() request: any,
