@@ -23,7 +23,7 @@ export class PartidosService {
     async create(partido: CreatePartidoRequest, image: BufferedFile): Promise<SuccessfullResponse> {
         const findSecretKey = await this._secretKeyDao.findOne(partido.secretKey);
         if (!findSecretKey) throw new BadRequestException('Secret key not found');
-        const minioImageUrl = await this._minioService.upload(image, process.env.BUCKET_NAME);
+        const minioImageUrl = await this._minioService.upload(image);
         let newPartido = new Partidos();
         newPartido.setName(partido.name);
         newPartido.setLogo(minioImageUrl.url);

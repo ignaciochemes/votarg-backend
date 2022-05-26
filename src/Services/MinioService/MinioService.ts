@@ -20,7 +20,7 @@ export class MinioService {
         );
     }
 
-    async upload(file: BufferedFile, bucketName: string): Promise<MinioPutObjectResponse> {
+    async upload(file: BufferedFile): Promise<MinioPutObjectResponse> {
         if (!(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))) {
             throw new BadRequestException('File type not supported');
         }
@@ -29,8 +29,8 @@ export class MinioService {
         const extension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
         const metaData = { 'Content-Type': file.mimetype };
         const fileName = hashedFileName + extension;
-        this._s3Service.putObject(bucketName, fileName, file.buffer, metaData);
-        return new MinioPutObjectResponse(`https://${process.env.MINIO_ENDPOINT}/${bucketName}/${fileName}`)
+        this._s3Service.putObject(this.bucketName, fileName, file.buffer, metaData);
+        return new MinioPutObjectResponse(`https://${process.env.MINIO_ENDPOINT}/${this.bucketName}/${fileName}`)
     }
 
     private setPolicy(): string {
