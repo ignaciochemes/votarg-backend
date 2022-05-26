@@ -37,6 +37,10 @@ export class PartidosService {
     }
 
     async votar(id: number, request: any, ip: string): Promise<SuccessfullResponse> {
+        const requestIpHeader = request.headers['x-forwarded-for'];
+        const requestIpConnection = request.connection.remoteAddress;
+        console.log('REQUEST IP HEADER', requestIpHeader);
+        console.log('REQUEST IP CONNECTION', requestIpConnection);
         const detector = new DeviceDetector();
         const result = detector.detect(request.headers['user-agent']);
         let findPartido = await this._partidosDao.findOne(id);
