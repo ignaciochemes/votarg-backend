@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { RealIP } from "nestjs-real-ip";
 import Response from "src/Helpers/Formatter/Response";
-//import { HttpInterceptor } from "src/Middleware/HttpInterceptor";
+import { HttpInterceptor } from "src/Middleware/HttpInterceptor";
 import { Partidos } from "src/Models/Entities/PartidosEntity";
 import { BufferedFile } from "src/Models/File/FileModel";
 import CreatePartidoRequest from "src/Models/Request/PartidosController/CreatePartidoRequest";
+import VotePartidoRequest from "src/Models/Request/PartidosController/VotePartidoRequest";
 import SuccessfullResponse from "src/Models/Response/SuccessfullResponse";
 import { PartidosService } from "src/Services/PartidosService";
 
@@ -30,14 +30,14 @@ export class PartidosController {
         return Response.create<Partidos[]>(response);
     }
 
-    //@UseInterceptors(HttpInterceptor)
+    @UseInterceptors(HttpInterceptor)
     @Post('/:id/votar')
     async votar(
         @Req() request: any,
-        @RealIP() ip: string,
+        @Body() data: VotePartidoRequest,
         @Param('id', ParseIntPipe) id: number,
     ): Promise<Response<SuccessfullResponse>> {
-        const response = await this._partidosService.votar(id, request, ip);
+        const response = await this._partidosService.votar(id, request, data);
         return Response.create<SuccessfullResponse>(response);
     }
 }

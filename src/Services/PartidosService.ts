@@ -6,6 +6,7 @@ import { Partidos } from "src/Models/Entities/PartidosEntity";
 import { User } from "src/Models/Entities/UserEntity";
 import { BufferedFile } from "src/Models/File/FileModel";
 import CreatePartidoRequest from "src/Models/Request/PartidosController/CreatePartidoRequest";
+import VotePartidoRequest from "src/Models/Request/PartidosController/VotePartidoRequest";
 import SuccessfullResponse from "src/Models/Response/SuccessfullResponse";
 import { MinioService } from "./MinioService/MinioService";
 
@@ -36,24 +37,20 @@ export class PartidosService {
         return await this._partidosDao.findAll();
     }
 
-    async votar(id: number, request: any, ip: string): Promise<SuccessfullResponse> {
-        const requestIpHeader = request.headers['x-forwarded-for'];
-        const requestIpConnection = request.connection.remoteAddress;
-        console.log('REQUEST IP HEADER', requestIpHeader);
-        console.log('REQUEST IP CONNECTION', requestIpConnection);
+    async votar(id: number, request: any, data: VotePartidoRequest): Promise<SuccessfullResponse> {
         const detector = new DeviceDetector();
         const result = detector.detect(request.headers['user-agent']);
         let findPartido = await this._partidosDao.findOne(id);
         if (!findPartido) throw new BadRequestException('Partido not found');
-        const findUser = await this._userDao.findByIp(ip);
+        const findUser = await this._userDao.findByIp(data.ip);
         if (findUser.length > 5) throw new BadRequestException('You have exceeded the limit of votes per family');
         for (let i = 0; i < findUser.length; i++) {
             if (
-                findUser[i].getIp() === ip &&
+                findUser[i].getIp() === data.ip &&
                 findUser[i].getOsName() === result.os.name &&
                 findUser[i].getOsPlatform() === result.os.platform &&
                 findUser[i].getDeviceType() === result.device.type ||
-                findUser[i].getIp() === ip &&
+                findUser[i].getIp() === data.ip &&
                 findUser[i].getOsName() === result.os.name &&
                 findUser[i].getOsPlatform() === result.os.platform &&
                 findUser[i].getDeviceType() === result.device.type &&
@@ -64,7 +61,7 @@ export class PartidosService {
             }
         }
         let newUser = new User();
-        newUser.setIp(ip);
+        newUser.setIp(data.ip);
         newUser.setUserAgent(request.headers['user-agent']);
         newUser.setOsName(result.os.name);
         newUser.setOsPlatform(result.os.platform);
