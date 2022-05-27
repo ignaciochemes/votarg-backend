@@ -38,7 +38,7 @@ export class PartidosService {
     }
 
     async votar(id: number, request: any, data: VotePartidoRequest): Promise<SuccessfullResponse> {
-        console.log(data);
+        if (!data?.ip || data?.ip === null || data?.ip === undefined) throw new BadRequestException('IP not found');
         const detector = new DeviceDetector();
         const result = detector.detect(request.headers['user-agent']);
         let findPartido = await this._partidosDao.findOne(id);
