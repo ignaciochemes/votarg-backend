@@ -10,7 +10,6 @@ export class HealthCheckDao {
     async findOne(id: number): Promise<HealthCheckEntity> {
         const query = this.healthCheckRepository
             .createQueryBuilder("healthCheck")
-            .select("healthCheck.checker", "checker")
             .where("healthCheck.id = :id", { id: id })
             .getQuery();
         return await this.healthCheckRepository.query(query);
