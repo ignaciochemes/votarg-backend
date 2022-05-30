@@ -11,7 +11,7 @@ export class HealthCheckDao {
         const query = this.healthCheckRepository
             .createQueryBuilder("healthCheck")
             .where("healthCheck.id = :id", { id: id })
-            .getQuery();
-        return await this.healthCheckRepository.query(query);
+            .getOne();
+        return query;
     }
 }
