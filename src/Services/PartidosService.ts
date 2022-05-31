@@ -9,8 +9,10 @@ import { User } from "src/Models/Entities/UserEntity";
 import { BufferedFile } from "src/Models/File/FileModel";
 import CreatePartidoRequest from "src/Models/Request/PartidosController/CreatePartidoRequest";
 import VotePartidoRequest from "src/Models/Request/PartidosController/VotePartidoRequest";
+import { VoteSocketRequest } from "src/Models/Request/PartidosController/VoteSocketRequest";
 import SuccessfullResponse from "src/Models/Response/SuccessfullResponse";
 import { GeoIpWebService } from "src/WebServices/GeoIpWebService";
+import { WebSocketWebService } from "src/WebServices/WebsocketsWebService";
 import { MinioService } from "./MinioService/MinioService";
 
 const DeviceDetector = require('node-device-detector');
@@ -23,7 +25,8 @@ export class PartidosService {
         private readonly _userDao: UserDao,
         private readonly _minioService: MinioService,
         private readonly _geoIpWebService: GeoIpWebService,
-        private readonly _ipRegistryDao: IpRegistryDao
+        private readonly _ipRegistryDao: IpRegistryDao,
+        private readonly _webSocketWebService: WebSocketWebService
     ) { }
 
     async create(partido: CreatePartidoRequest, image: BufferedFile): Promise<SuccessfullResponse> {
@@ -88,6 +91,8 @@ export class PartidosService {
         await this._ipRegistryDao.save(newIpRegistry);
         findPartido.setVotos(findPartido.getVotos() + 1);
         await this._partidosDao.update(findPartido);
+        const newSocketVote = new VoteSocketRequest(findPartido.getName());
+        await this._webSocketWebService.vote(newSocketVote);
         return new SuccessfullResponse(true);
     }
 
