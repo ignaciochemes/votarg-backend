@@ -13,7 +13,7 @@ export class WebSocketWebService extends AxiosWebServices {
 
     async vote(data: VoteSocketRequest): Promise<void> {
         const url = `${this.webSocketUri}/vote`;
-        await this.post(url, data);
+        this.post(url, data);
     }
 
 }
