@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: votarg-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: votarg-backend
+  template:
+    metadata:
+      labels:
+        role: votarg-backend
+    spec:
+      containers:
+      - name: votarg-backend
+        image: ${{ secrets.REGISTRY_URL }}/votarg-backend-rest:v1.5.6
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 1600m
+            memory: 700Mi
+          requests:
+            cpu: 300m
+            memory: 250Mi
+        readinessProbe:
+          httpGet:
+            path: /healtcheck
+            port: ${{ secrets.APP_PORT }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: ${{ secrets.APP_PORT }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        ports:
+        - containerPort: ${{ secrets.APP_PORT }}
